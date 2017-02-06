@@ -1,0 +1,143 @@
+<div class="widgets">
+  <div class="row">
+    <div class="col-md-6">
+      <ba-card title="Profile Picture" baCardClass="with-scroll">
+        <div class="picture-group" [ngClass]="{uploading: uploadInProgress}">
+          <div class="picture-wrapper" (click)="bringFileSelector();">
+            <img src="{{ picture }}" *ngIf="picture">
+            <img src="{{ defaultPicture }}" *ngIf="!picture && defaultPicture">
+
+            <div class="loading" *ngIf="uploadInProgress">
+              <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+              </div>
+            </div>
+          </div>
+          <i class="ion-ios-close-outline" (click)="removePicture();" *ngIf="picture && canDelete"></i>
+          <i class="ion-ios-close-outline" (click)="removePicture();" *ngIf="picture && canDelete"></i>
+          <a href class="change-picture" (click)="bringFileSelector();">Change profile Picture</a>
+          <input #fileUpload type="file" hidden="true" id="uploadFile" (change)="onFiles()">
+
+        </div>
+      </ba-card>
+    </div>
+
+
+    <div class="col-md-6">
+      <ba-card title="Profile Details" baCardClass="with-scroll">
+
+        <div class="form-group">
+          <label for="username">User Name</label>
+          <input type="text" [(ngModel)]="profile.username" class="form-control form-control-rounded" id="username"
+                 placeholder="Text">
+        </div>
+        <div class="row">
+          <div class="form-group col-sm-4">
+            <label for="password">Password</label>
+            <input type="password" [(ngModel)]="profile.password" class="form-control form-control-rounded"
+                   id="password"
+                   placeholder="Password">
+          </div>
+          <div class="form-group col-sm-4">
+            <label for="re-password">Re-Type Password</label>
+            <input type="password" [(ngModel)]="profile.repassword" class="form-control form-control-rounded"
+                   id="re-password"
+                   placeholder="Re-Type Password">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-sm-4">
+            <label for="fname">First Name</label>
+            <input type="text" [(ngModel)]="profile.firstname" class="form-control form-control-rounded" id="fname"
+                   placeholder="First Name">
+          </div>
+          <div class="form-group col-sm-4">
+            <label for="mname">Middle Name</label>
+            <input type="text" [(ngModel)]="profile.middlename" class="form-control form-control-rounded" id="mname"
+                   placeholder="Middle Name">
+          </div>
+          <div class="form-group col-sm-4">
+            <label for="lname">Last Name</label>
+            <input type="text" [(ngModel)]="profile.lastname" class="form-control form-control-rounded" id="lname"
+                   placeholder="Last Name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="Gender">Gender</label>
+          <div class="row">
+            <div class="form-group col-sm-4">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" [(ngModel)]="profile.gender" name="inlineRadioOptions" id="Gender" value="Male">
+                <span>Male</span>
+              </label>
+            </div>
+            <div class="form-group col-sm-4">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" [(ngModel)]="profile.gender" name="inlineRadioOptions" value="Female">
+                <span>Female</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="Mobile">Mobile No.</label>
+          <input type="text" [(ngModel)]="profile.mobile" class="form-control" id="Mobile" placeholder="Mobile No">
+
+        </div>
+        <div class="form-group">
+          <label for="Address">Address</label>
+          <textarea placeholder="Parmanant Address" [(ngModel)]="profile.address" class="form-control"
+                    id="Address"></textarea>
+        </div>
+        <div class="row">
+          <div class="form-group col-sm-4">
+            <label>State</label>
+            <md-select id="State" class="form-control" (change)="change($event)"
+                       [disabled]="disabled">
+              <md-option *ngFor="let i of states" [value]="i.value" [disabled]="i.disabled">{{i.name}}</md-option>
+            </md-select>
+          </div>
+          <div class="form-group col-sm-4">
+            <label>City</label>
+            <md-select class="form-control" [(ngModel)]="profile.city" [disabled]="disabled">
+              <md-option *ngFor="let i of citylist" [value]="i.id" [disabled]="i.disabled">{{i.name}}</md-option>
+            </md-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-8">
+            <label for="Notify">Notify Me!</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label class="checkbox-inline custom-checkbox nowrap">
+              <input type="checkbox" [(ngModel)]="profile.upcomingsale" [value]="value">
+              <span>Upcoming Sale</span>
+            </label>
+          </div>
+          <div class="form-group col-md-4">
+            <label class="checkbox-inline custom-checkbox nowrap">
+              <input type="checkbox" [(ngModel)]="profile.newarrival" [value]="value">
+              <span>New Arrival</span>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-8">
+            <button class="btn btn-primary" (click)="setProfile(profile)" type="submit">Submit</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8" style="color: green" *ngIf="savedSuccess">Profile Data is Saved Successfully!!!</div>
+          <div class="col-md-8" style="color: red" *ngIf="saveUnsuccess">Unable to Save Profile Data!!!</div>
+        </div>
+
+      </ba-card>
+    </div>
+  </div>
+
+
+</div>
