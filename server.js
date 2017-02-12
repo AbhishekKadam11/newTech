@@ -3,6 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
+var ObjectId = require('mongodb').ObjectId;
 var passport = require('passport');
 var jwt = require('jwt-simple');
 var jwtverify = require('jsonwebtoken');
@@ -41,6 +42,7 @@ app.listen(port, ip, function () {
 // connect to database
 mongoose.connect(config.database);
 var conn = mongoose.connection;
+var db = mongoose.connection.db;
 
 //CORS middleware
 var allowCrossDomain = function (req, res, next) {
@@ -307,7 +309,7 @@ apiRoutes.get('/state', function (req, res) {
 });
 
 apiRoutes.get('/city', function (req, res) {
-  return cities.find(function (err, result) {
+  return db.collection('states').find(function (err, result) {
     if (!err) {
       return res.send(result);
     } else {
@@ -335,18 +337,18 @@ apiRoutes.post('/profiledata', ensureAuthorized, function (req, res) {
           }
         });
       } else {
-        uppdateUser();
+        updateUser();
       }
     })
   };
 
   newpassword(req.body.password).then(function (res) {
-    uppdateUser(res)
+    updateUser(res)
   }, function (err) {
     console.log(err);
   });
 
-  function uppdateUser(newPass) {
+  function updateUser(newPass) {
     var profileData = {};
     if (req.body.username) {
       profileData['name'] = req.body.username;
@@ -389,6 +391,78 @@ apiRoutes.post('/profiledata', ensureAuthorized, function (req, res) {
       res.json({success: true, msg: 'Successful Updated.'});
     });
   }
+});
+
+apiRoutes.get('/userBasicDetails', ensureAuthorized, function (req, res) {
+  var user_id = new ObjectId(req.userid);
+  var userdata = {};
+  db.collection('users').findOne({_id: user_id}, function (err, result) {
+    if (!err) {
+      setuserObjects(result)
+        .then(function (success) {
+          imageFound(result.imageId)
+            .then(function (success) {
+              return res.json({userData: userdata});
+            }, function (err) {
+              return res.json({userData: userdata});
+            })
+        })
+    } else {
+      return console.log(err);
+    }
+  });
+
+  var imageFound = function (imageid) {
+    return new Promise(function (resolve, reject) {
+      if (imageid) {
+        grid.mongo = mongoose.mongo;
+        var gfs = grid(conn.db);
+        try {
+          var data = [];
+          var readstream = gfs.createReadStream({_id: imageid});
+          readstream.on('data', function (chunk) {
+            data.push(chunk);
+          });
+
+          readstream.on('end', function () {
+            data = Buffer.concat(data);
+            var img = 'data:image/jpeg;base64,' + Buffer(data).toString('base64');
+            userdata['image'] = img;
+            resolve(userdata['image']);
+            // res.end(img);
+          });
+
+          readstream.on('error', function (err) {
+            console.log('An error occurred!', err);
+            throw err;
+          });
+        }
+        catch (err) {
+          console.log(err);
+          return next(errors.create(404, "File not found."));
+        }
+      } else {
+        reject('No Image');
+      }
+
+    })
+  };
+
+  var setuserObjects = function (data) {
+    return new Promise(function (resolve, reject) {
+      userdata['firstname'] = data.firstName;
+      userdata['middlename'] = data.middleName;
+      userdata['lastname'] = data.lastName;
+      userdata['username'] = data.name;
+      userdata['gender'] = data.gender;
+      userdata['mobile'] = data.mobileNo;
+      userdata['address'] = data.address;
+      userdata['upcomingsale'] = data.extraaddon.upcomingsale;
+      userdata['newarrival'] = data.extraaddon.newarrival;
+      resolve(userdata);
+    })
+  }
+
 
 
 

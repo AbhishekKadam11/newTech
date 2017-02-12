@@ -22,7 +22,7 @@ export class Profile {
   };
 
  // @Input() defaultPicture:string = '';
-  @Input() picture:string = '';
+  // @Input() picture:string = '';
 
  // @Input() uploaderOptions:any = {};
   @Input() canDelete:boolean = true;
@@ -43,8 +43,14 @@ export class Profile {
   public profile = {};  //model
   private savedSuccess: boolean = false;
   private saveUnsuccess: boolean = false;
+  public picture:any;
 
   constructor(private profileService: ProfileService, private renderer:Renderer, protected _uploader:Ng2Uploader) {
+    this.profileService.getBasicDetails().subscribe((result) => {
+      this.profile = result.userData;
+      this.picture = result.userData.image;
+    });
+
     this.profileService.getcities().subscribe((result) => {
       result.forEach((data) => {
         if (data.sid) {
@@ -76,6 +82,7 @@ export class Profile {
     } else {
       console.warn('Please specify url parameter to be able to upload the file on the back-end');
     }
+
   }
 
   public onFiles():void {
@@ -141,6 +148,7 @@ export class Profile {
 
 
   private setProfile(profile) {
+    profile.image = '';
     this.profileService.setprofileData(profile)
       .subscribe((result) => {
         this.savedSuccess = true;

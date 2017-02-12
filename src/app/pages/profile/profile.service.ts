@@ -12,6 +12,15 @@ export class ProfileService {
   constructor(private http: HttpClient) {
     this.http = http;
   }
+
+  getBasicDetails() {
+    return this.http.get('http://localhost:8080/api/userBasicDetails')
+      .map(res => res.json())
+      .map((res) => {
+        return res;
+      })
+  }
+
   getcities() {
     return this.http.get('http://localhost:8080/api/state')
       .map(res => res.json())
