@@ -75,53 +75,6 @@ function ensureAuthorized(req, res, next) {
   }
 }
 
-// apiRoutes.get('/me', ensureAuthorized, function(req, res) {
-//   User.findOne({token: req.token}, function(err, user) {
-//     if (err) {
-//       res.json({
-//         type: false,
-//         data: "Error occured: " + err
-//       });
-//     } else {
-//       res.json({
-//         type: true,
-//         data: user
-//       });
-//     }
-//   });
-// });
-
-// route middleware to verify a token
-// apiRoutes.use(function(req, res, next) {
-//
-//   // check header or url parameters or post parameters for token
-//   var token = req.body.token || req.query.token || req.headers['authorization'];
-//
-//   // decode token
-//   if (token) {
-//   //  var decodeds = jwt.verify(token, 'AbhishekIsAwesome');
-//     // verifies secret and checks exp
-//     jwtverify.verify(token, config.secret, function(err, decoded) {
-//       if (err) {
-//         return res.json({ success: false, message: 'Failed to authenticate token.' });
-//       } else {
-//         // if everything is good, save to request for use in other routes
-//         req.decoded = decoded;
-//         next();
-//       }
-//     });
-//
-//   } else {
-//
-//     // if there is no token
-//     // return an error
-//     return res.status(403).send({
-//       success: false,
-//       message: 'No token provided.'
-//     });
-//
-//   }
-// });
 
 // create a new user account (POST http://localhost:8080/api/signup)
 apiRoutes.post('/signup', function (req, res) {
@@ -299,7 +252,6 @@ function getFileById(req, res, next) {
 
 apiRoutes.get('/state', function (req, res) {
   return states.find(function (err, result) {
-    var items = [];
     if (!err) {
       return res.send(result);
     } else {
@@ -308,14 +260,13 @@ apiRoutes.get('/state', function (req, res) {
   });
 });
 
-apiRoutes.get('/city', function (req, res) {
-  return db.collection('states').find(function (err, result) {
-    if (!err) {
-      return res.send(result);
-    } else {
-      return console.log(err);
-    }
-  });
+apiRoutes.get('/cities/:id', function (req, res) {
+   db.collection('cities').find({s_id: req.params.id}).toArray().then(function(doc) {
+     res.send(doc);
+   }, function(error){
+     console.log(error)
+   })
+
 });
 
 apiRoutes.post('/profiledata', ensureAuthorized, function (req, res) {
@@ -404,13 +355,18 @@ apiRoutes.get('/userBasicDetails', ensureAuthorized, function (req, res) {
             .then(function (success) {
               return res.json({userData: userdata});
             }, function (err) {
-              return res.json({userData: userdata});
+              return res.json({userData: userdata});   //without image
             })
+           // getplace(result.placeId)
+           //   .then(function (success) {
+           //     return res.json({userData: userdata});
+           //   })
         })
     } else {
       return console.log(err);
     }
   });
+
 
   var imageFound = function (imageid) {
     return new Promise(function (resolve, reject) {
@@ -459,10 +415,12 @@ apiRoutes.get('/userBasicDetails', ensureAuthorized, function (req, res) {
       userdata['address'] = data.address;
       userdata['upcomingsale'] = data.extraaddon.upcomingsale;
       userdata['newarrival'] = data.extraaddon.newarrival;
+      userdata['selectedState'] = data.state_id;
+      userdata['selectedCity'] = data.city_id;
+
       resolve(userdata);
     })
-  }
-
+  };
 
 
 

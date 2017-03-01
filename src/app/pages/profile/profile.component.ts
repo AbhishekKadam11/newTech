@@ -38,36 +38,42 @@ export class Profile {
 
   private states: Array<any> = [];
   private cities: Array<any> = [];
-  private citylist: Array<any> = [];
+
   private city: string = '';
   public profile = {};  //model
   private savedSuccess: boolean = false;
   private saveUnsuccess: boolean = false;
   public picture:any;
+  private selectedState: string;
+  private selectedCity: string;
 
   constructor(private profileService: ProfileService, private renderer:Renderer, protected _uploader:Ng2Uploader) {
+
+
+
+    this.profileService.getstates().subscribe((result) => {
+      result.forEach((data) => {
+        if (data.sid) {
+          this.states.push({
+            value: data._id,
+            name: data.statename,
+          });
+        }
+        // if (data.cid) {
+        //   this.cities.push({
+        //     value: data.cid,
+        //     name: data.cityname,
+        //     id: data._id
+        //   });
+        // }
+      });
+    });
+
     this.profileService.getBasicDetails().subscribe((result) => {
       this.profile = result.userData;
       this.picture = result.userData.image;
     });
-
-    this.profileService.getcities().subscribe((result) => {
-      result.forEach((data) => {
-        if (data.sid) {
-          this.states.push({
-            value: data.sid,
-            name: data.statename,
-          });
-        }
-        if (data.cid) {
-          this.cities.push({
-            value: data.cid,
-            name: data.cityname,
-            id: data._id
-          });
-        }
-      });
-    });
+   // this.selectedState= '58316208cfa8bd0530f4a1ee';
   }
 
   public ngOnInit():void {
@@ -136,14 +142,20 @@ export class Profile {
 
   //------------------------------------
   private change(value: any) {
-   // this.citylist = [];
-    this.cities.forEach((data)=> {
-      if (data.value == value.value) {
-        this.citylist.push(data);
-      } else {
-        this.citylist.push("No city found");
-      }
-    })
+
+    if(value.value){
+      this.profileService.getcities(value.value).subscribe((result) => {
+        result.forEach((data) => {
+
+            this.cities.push({
+              value: data._id,
+              name: data.cityname,
+            });
+        })
+      });
+    }
+
+
   }
 
 

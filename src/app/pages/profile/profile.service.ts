@@ -21,8 +21,17 @@ export class ProfileService {
       })
   }
 
-  getcities() {
+  getstates() {
     return this.http.get('http://localhost:8080/api/state')
+      .map(res => res.json())
+      .map((res) => {
+        return res;
+      })
+  }
+
+  getcities(stateid) {
+    var selectedstate = JSON.stringify({ data: stateid });
+    return this.http.get('http://localhost:8080/api/cities/'+stateid)
       .map(res => res.json())
       .map((res) => {
         return res;
