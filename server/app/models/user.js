@@ -41,7 +41,10 @@ var UserSchema = new Schema({
   address: {
     type: String
   },
-  placeId: {
+  city_id: {
+    type: String
+  },
+  state_id: {
     type: String
   },
   extraaddon: {

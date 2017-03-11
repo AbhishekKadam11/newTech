@@ -331,8 +331,11 @@ apiRoutes.post('/profiledata', ensureAuthorized, function (req, res) {
     if (req.body.newarrival || req.body.upcomingsale) {
       profileData['extraaddon'] = {'newarrival': req.body.newarrival, 'upcomingsale': req.body.upcomingsale};
     }
-    if (req.body.city) {
-      profileData['placeId'] = req.body.city;
+    if (req.body.selectedState) {
+      profileData['state_id'] = req.body.selectedState;
+    }
+    if (req.body.selectedCity) {
+      profileData['city_id'] = req.body.selectedCity;
     }
     var condition = {_id: req.userid};
     User.findOneAndUpdate(condition, profileData, {upsert: false, new: true}, function (err, doc) {

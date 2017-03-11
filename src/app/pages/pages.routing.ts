@@ -28,6 +28,7 @@ const routes: Routes = [
       { path: 'tables', loadChildren: () => System.import('./tables/tables.module') },
       { path: 'maps', loadChildren: () => System.import('./maps/maps.module') },
       { path: 'profile', loadChildren: () => System.import('./profile/profile.module') },
+      { path: 'product', loadChildren: () => System.import('./product/product.module') },
 
     ]
   }

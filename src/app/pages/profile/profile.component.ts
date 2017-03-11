@@ -3,7 +3,6 @@ import {ProfileService} from './profile.service';
 import {MD_SELECT_DIRECTIVES, MdSelectDispatcher} from '../../../../node_modules/md-select';
 import {Ng2Uploader} from 'ng2-uploader/ng2-uploader';
 
-
 @Component({
   selector: 'standard-inputs',
   directives: [MD_SELECT_DIRECTIVES],
@@ -13,7 +12,6 @@ import {Ng2Uploader} from 'ng2-uploader/ng2-uploader';
 
 })
 
-
 export class Profile {
 
   public defaultPicture = 'assets/img/theme/no-photo.png';
@@ -21,10 +19,6 @@ export class Profile {
     url: 'http://localhost:8080/api/upload'
   };
 
- // @Input() defaultPicture:string = '';
-  // @Input() picture:string = '';
-
- // @Input() uploaderOptions:any = {};
   @Input() canDelete:boolean = true;
 
   onUpload:EventEmitter<any> = new EventEmitter();
@@ -49,8 +43,6 @@ export class Profile {
 
   constructor(private profileService: ProfileService, private renderer:Renderer, protected _uploader:Ng2Uploader) {
 
-
-
     this.profileService.getstates().subscribe((result) => {
       result.forEach((data) => {
         if (data.sid) {
@@ -59,13 +51,6 @@ export class Profile {
             name: data.statename,
           });
         }
-        // if (data.cid) {
-        //   this.cities.push({
-        //     value: data.cid,
-        //     name: data.cityname,
-        //     id: data._id
-        //   });
-        // }
       });
     });
 
@@ -73,7 +58,6 @@ export class Profile {
       this.profile = result.userData;
       this.picture = result.userData.image;
     });
-   // this.selectedState= '58316208cfa8bd0530f4a1ee';
   }
 
   public ngOnInit():void {
@@ -142,11 +126,9 @@ export class Profile {
 
   //------------------------------------
   private change(value: any) {
-
     if(value.value){
       this.profileService.getcities(value.value).subscribe((result) => {
         result.forEach((data) => {
-
             this.cities.push({
               value: data._id,
               name: data.cityname,
@@ -154,8 +136,6 @@ export class Profile {
         })
       });
     }
-
-
   }
 
 
@@ -175,8 +155,6 @@ export class Profile {
         }, 3000);
 
       });
-
-
   }
 
   public onChange(value: any): void {
